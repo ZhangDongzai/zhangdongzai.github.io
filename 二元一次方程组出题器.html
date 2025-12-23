@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二元一次方程组整数解出题器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .control-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group h3 {
+            color: #3498db;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 15px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .difficulty-btn:hover {
+            background: #dfe6e9;
+        }
+        
+        .difficulty-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .type-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .type-btn {
+            padding: 12px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .type-btn:hover {
+            background: #dfe6e9;
+        }
+        
+        .type-btn.active {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .generate-btn:hover {
+            background: linear-gradient(90deg, #2980b9, #3498db);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .problem-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .equation-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #3498db;
+        }
+        
+        .equation {
+            font-size: 2rem;
+            text-align: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .solution-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .solution-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .solution-btn {
+            padding: 12px 20px;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 150px;
+            justify-content: center;
+        }
+        
+        .solution-btn:hover {
+            background: #dfe6e9;
+        }
+        
+        .solution-btn.primary {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .solution-btn.primary:hover {
+            background: #2980b9;
+        }
+        
+        .solution-btn.success {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .solution-btn.success:hover {
+            background: #27ae60;
+        }
+        
+        .solution-step {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .solution-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .step-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .answer-input {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group label {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 80px;
+        }
+        
+        .input-group input {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            width: 120px;
+            text-align: center;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .check-btn {
+            padding: 12px 25px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .check-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .result-message.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .result-message.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .answer-display {
+            background: #e8f4fc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .answer-display.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .answer-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .answer-content {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #3498db;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .theory-box {
+            background: #fff8e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid #ffb300;
+        }
+        
+        .theory-box h3 {
+            color: #ff8f00;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .theory-content {
+            color: #5d4037;
+            line-height: 1.6;
+        }
+        
+        .tips {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .tips h4 {
+            color: #2e7d32;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .history {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+        
+        .history h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .coefficient-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .range-value {
+            font-weight: bold;
+            color: #3498db;
+            min-width: 40px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> 二元一次方程组整数解出题器</h1>
+            <p class="subtitle">专为数学学习设计，确保每个方程组的解都为整数，支持多种题型和难度级别</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                <h2 class="section-title"><i class="fas fa-sliders-h"></i> 出题设置</h2>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-chart-line"></i> 难度级别</h3>
+                    <div class="difficulty-buttons">
+                        <div class="difficulty-btn active" data-level="easy">简单</div>
+                        <div class="difficulty-btn" data-level="medium">中等</div>
+                        <div class="difficulty-btn" data-level="hard">困难</div>
+                        <div class="difficulty-btn" data-level="random">随机</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-shapes"></i> 题型选择</h3>
+                    <div class="type-buttons">
+                        <div class="type-btn active" data-type="standard">标准型</div>
+                        <div class="type-btn" data-type="fraction">分数系数</div>
+                        <div class="type-btn" data-type="decimal">小数系数</div>
+                        <div class="type-btn" data-type="word">应用题</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-exchange-alt"></i> 系数范围</h3>
+                    <div class="coefficient-range">
+                        <span>系数范围:</span>
+                        <input type="range" id="coeffRange" min="1" max="20" value="10">
+                        <span class="range-value" id="coeffValue">1~10</span>
+                    </div>
+                    <div class="tips">
+                        <h4><i class="fas fa-lightbulb"></i> 提示</h4>
+                        <p>系数范围越小，方程越容易计算；范围越大，方程越具有挑战性。</p>
+                    </div>
+                </div>
+                
+                <button class="generate-btn" id="generateBtn">
+                    <i class="fas fa-random"></i> 生成新题目
+                </button>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalProblems">0</div>
+                        <div class="stat-label">生成题目总数</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="correctAnswers">0</div>
+                        <div class="stat-label">正确解答数</div>
+                    </div>
+                </div>
+                
+                <div class="theory-box">
+                    <h3><i class="fas fa-book"></i> 二元一次方程组知识</h3>
+                    <div class="theory-content">
+                        <p>二元一次方程组的一般形式：</p>
+                        <p>a₁x + b₁y = c₁</p>
+                        <p>a₂x + b₂y = c₂</p>
+                        <p>其中a₁, b₁, c₁, a₂, b₂, c₂为已知数，x, y为未知数。</p>
+                        <p>本出题器确保所有解(x, y)都为整数。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="problem-section">
+                <h2 class="section-title"><i class="fas fa-question-circle"></i> 当前题目</h2>
+                
+                <div class="equation-container">
+                    <div class="equation" id="equation1">2x + 3y = 12</div>
+                    <div class="equation" id="equation2">x - y = 1</div>
+                </div>
+                
+                <div class="solution-section">
+                    <h2 class="section-title"><i class="fas fa-graduation-cap"></i> 解题过程</h2>
+                    
+                    <div class="solution-controls">
+                        <button class="solution-btn primary" id="showStepsBtn">
+                            <i class="fas fa-list-ol"></i> 显示解题步骤
+                        </button>
+                        <button class="solution-btn" id="showAnswerBtn">
+                            <i class="fas fa-eye"></i> 显示答案
+                        </button>
+                        <button class="solution-btn success" id="checkAnswerBtn">
+                            <i class="fas fa-check"></i> 检查答案
+                        </button>
+                    </div>
+                    
+                    <div class="solution-step" id="step1">
+                        <div class="step-title">步骤 1: 选择解法</div>
+                        <div class="step-content">
+                            我们可以使用代入法或消元法解这个方程组。这里我们使用消元法。
+                        </div>
+                    </div>
+                    
+                    <div class="solution-step" id="step2">
+                        <div class="step-title">步骤 2: 准备消元</div>
+                        <div class="step-content">
+                            将第二个方程两边乘以2，得到：2x - 2y = 2。<br>
+                            现在方程组变为：<br>
+                            2x + 3y = 12<br>
+                            2x - 2y = 2
+                        </div>
+                    </div>
+                    
+                    <div class="solution-step" id="step3">
+                        <div class="step-title">步骤 3: 消去x</div>
+                        <div class="step-content">
+                            用第一个方程减去第二个方程：(2x + 3y) - (2x - 2y) = 12 - 2<br>
+                            得到：5y = 10<br>
+                            所以：y = 2
+                        </div>
+                    </div>
+                    
+                    <div class="solution-step" id="step4">
+                        <div class="step-title">步骤 4: 求x的值</div>
+                        <div class="step-content">
+                            将y = 2代入第二个方程：x - 2 = 1<br>
+                            得到：x = 3
+                        </div>
+                    </div>
+                    
+                    <div class="solution-step" id="step5">
+                        <div class="step-title">步骤 5: 验证解</div>
+                        <div class="step-content">
+                            将x = 3, y = 2代入原方程组验证：<br>
+                            第一式：2×3 + 3×2 = 6 + 6 = 12 ✓<br>
+                            第二式：3 - 2 = 1 ✓<br>
+                            所以解正确。
+                        </div>
+                    </div>
+                    
+                    <div class="answer-input">
+                        <h3><i class="fas fa-pencil-alt"></i> 输入你的答案</h3>
+                        <div class="input-group">
+                            <label for="xValue">x = </label>
+                            <input type="number" id="xValue" placeholder="输入x的值">
+                        </div>
+                        <div class="input-group">
+                            <label for="yValue">y = </label>
+                            <input type="number" id="yValue" placeholder="输入y的值">
+                        </div>
+                        <button class="check-btn" id="submitAnswerBtn">
+                            <i class="fas fa-check-circle"></i> 提交答案
+                        </button>
+                        
+                        <div class="result-message" id="resultMessage"></div>
+                    </div>
+                    
+                    <div class="answer-display" id="answerDisplay">
+                        <div class="answer-title">正确答案：</div>
+                        <div class="answer-content" id="correctAnswer">x = 3, y = 2</div>
+                    </div>
+                </div>
+                
+                <div class="history">
+                    <h3><i class="fas fa-history"></i> 题目历史</h3>
+                    <div class="history-list" id="historyList">
+                        <div class="history-item">2x + 3y = 12, x - y = 1 (x=3, y=2)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>二元一次方程组整数解出题器 &copy; 2023 | 专为数学学习设计 | 确保所有解都为整数</p>
+            <p>提示：本工具生成的方程组解均为整数，适合练习和教学使用</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentDifficulty = 'easy';
+        let currentType = 'standard';
+        let currentCoeffRange = 10;
+        let totalProblems = 0;
+        let correctAnswers = 0;
+        let currentSystem = null;
+        let solutionSteps = [];
+        let problemHistory = [];
+        
+        // DOM元素
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        const typeButtons = document.querySelectorAll('.type-btn');
+        const generateBtn = document.getElementById('generateBtn');
+        const showStepsBtn = document.getElementById('showStepsBtn');
+        const showAnswerBtn = document.getElementById('showAnswerBtn');
+        const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+        const equation1 = document.getElementById('equation1');
+        const equation2 = document.getElementById('equation2');
+        const stepElements = document.querySelectorAll('.solution-step');
+        const xValueInput = document.getElementById('xValue');
+        const yValueInput = document.getElementById('yValue');
+        const resultMessage = document.getElementById('resultMessage');
+        const answerDisplay = document.getElementById('answerDisplay');
+        const correctAnswerElement = document.getElementById('correctAnswer');
+        const historyList = document.getElementById('historyList');
+        const totalProblemsElement = document.getElementById('totalProblems');
+        const correctAnswersElement = document.getElementById('correctAnswers');
+        const coeffRangeInput = document.getElementById('coeffRange');
+        const coeffValueElement = document.getElementById('coeffValue');
+        
+        // 初始化
+        function init() {
+            // 设置初始系数范围
+            updateCoeffRange();
+            
+            // 生成第一个题目
+            generateNewProblem();
+            
+            // 更新统计
+            updateStats();
+            
+            // 事件监听器
+            setupEventListeners();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 难度按钮
+            difficultyButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    difficultyButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDifficulty = this.getAttribute('data-level');
+                    generateNewProblem();
+                });
+            });
+            
+            // 题型按钮
+            typeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    typeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.getAttribute('data-type');
+                    generateNewProblem();
+                });
+            });
+            
+            // 生成新题目按钮
+            generateBtn.addEventListener('click', generateNewProblem);
+            
+            // 显示解题步骤按钮
+            showStepsBtn.addEventListener('click', showSolutionSteps);
+            
+            // 显示答案按钮
+            showAnswerBtn.addEventListener('click', showAnswer);
+            
+            // 检查答案按钮
+            checkAnswerBtn.addEventListener('click', checkAnswer);
+            
+            // 提交答案按钮
+            submitAnswerBtn.addEventListener('click', submitAnswer);
+            
+            // 系数范围滑块
+            coeffRangeInput.addEventListener('input', updateCoeffRange);
+        }
+        
+        // 更新系数范围显示
+        function updateCoeffRange() {
+            currentCoeffRange = parseInt(coeffRangeInput.value);
+            coeffValueElement.textContent = `1~${currentCoeffRange}`;
+        }
+        
+        // 生成新的二元一次方程组（确保整数解）
+        function generateNewProblem() {
+            // 根据难度级别设置参数
+            let coeffLimit, xLimit, yLimit;
+            
+            switch(currentDifficulty) {
+                case 'easy':
+                    coeffLimit = Math.min(5, currentCoeffRange);
+                    xLimit = 5;
+                    yLimit = 5;
+                    break;
+                case 'medium':
+                    coeffLimit = Math.min(10, currentCoeffRange);
+                    xLimit = 10;
+                    yLimit = 10;
+                    break;
+                case 'hard':
+                    coeffLimit = Math.min(currentCoeffRange, 20);
+                    xLimit = 15;
+                    yLimit = 15;
+                    break;
+                case 'random':
+                    coeffLimit = Math.floor(Math.random() * currentCoeffRange) + 1;
+                    xLimit = Math.floor(Math.random() * 15) + 1;
+                    yLimit = Math.floor(Math.random() * 15) + 1;
+                    break;
+                default:
+                    coeffLimit = 10;
+                    xLimit = 10;
+                    yLimit = 10;
+            }
+            
+            // 随机生成整数解
+            const x = getRandomInt(-xLimit, xLimit);
+            const y = getRandomInt(-yLimit, yLimit);
+            
+            // 避免x和y同时为0
+            if (x === 0 && y === 0) {
+                x = getRandomInt(1, xLimit);
+            }
+            
+            // 根据题型生成系数
+            let a1, b1, c1, a2, b2, c2;
+            
+            if (currentType === 'fraction') {
+                // 分数系数（实际上用整数表示，显示为分数）
+                [a1, b1, c1] = generateFractionCoefficients(x, y, coeffLimit);
+                [a2, b2, c2] = generateFractionCoefficients(x, y, coeffLimit);
+            } else if (currentType === 'decimal') {
+                // 小数系数
+                [a1, b1, c1] = generateDecimalCoefficients(x, y, coeffLimit);
+                [a2, b2, c2] = generateDecimalCoefficients(x, y, coeffLimit);
+            } else {
+                // 标准整数系数
+                [a1, b1, c1] = generateIntegerCoefficients(x, y, coeffLimit);
+                [a2, b2, c2] = generateIntegerCoefficients(x, y, coeffLimit);
+            }
+            
+            // 确保两个方程不平行（避免无解或无穷多解）
+            // 检查是否平行：a1/b1 = a2/b2
+            while (a1 * b2 === a2 * b1) {
+                // 重新生成第二组系数
+                if (currentType === 'fraction') {
+                    [a2, b2, c2] = generateFractionCoefficients(x, y, coeffLimit);
+                } else if (currentType === 'decimal') {
+                    [a2, b2, c2] = generateDecimalCoefficients(x, y, coeffLimit);
+                } else {
+                    [a2, b2, c2] = generateIntegerCoefficients(x, y, coeffLimit);
+                }
+            }
+            
+            // 存储当前方程组
+            currentSystem = {
+                eq1: { a: a1, b: b1, c: c1 },
+                eq2: { a: a2, b: b2, c: c2 },
+                solution: { x: x, y: y },
+                type: currentType
+            };
+            
+            // 更新题目显示
+            updateProblemDisplay();
+            
+            // 生成解题步骤
+            generateSolutionSteps();
+            
+            // 隐藏答案和结果
+            answerDisplay.classList.remove('show');
+            resultMessage.className = 'result-message';
+            resultMessage.style.display = 'none';
+            
+            // 清空输入框
+            xValueInput.value = '';
+            yValueInput.value = '';
+            
+            // 重置步骤显示
+            stepElements.forEach(step => step.classList.remove('active'));
+            
+            // 增加题目计数
+            totalProblems++;
+            updateStats();
+            
+            // 添加到历史记录
+            addToHistory();
+        }
+        
+        // 生成整数系数
+        function generateIntegerCoefficients(x, y, limit) {
+            // 随机生成a和b（不为0）
+            let a = getRandomIntNonZero(-limit, limit);
+            let b = getRandomIntNonZero(-limit, limit);
+            
+            // 计算c = a*x + b*y
+            const c = a * x + b * y;
+            
+            return [a, b, c];
+        }
+        
+        // 生成分数系数（显示为分数，实际计算用整数）
+        function generateFractionCoefficients(x, y, limit) {
+            // 生成分母（不为0）
+            const denom = getRandomIntNonZero(1, 3);
+            
+            // 生成分子
+            let aNum = getRandomIntNonZero(-limit, limit);
+            let bNum = getRandomIntNonZero(-limit, limit);
+            
+            // 计算c = (aNum/denom)*x + (bNum/denom)*y
+            // 为了确保c为整数，需要调整
+            const cNum = (aNum * x + bNum * y) / denom;
+            
+            // 如果c不是整数，调整系数
+            if (!Number.isInteger(cNum)) {
+                // 找到最小公倍数
+                const lcm = denom;
+                aNum *= lcm;
+                bNum *= lcm;
+                const c = aNum * x + bNum * y;
+                return [aNum, bNum, c];
+            }
+            
+            return [aNum, bNum, cNum * denom];
+        }
+        
+        // 生成小数系数
+        function generateDecimalCoefficients(x, y, limit) {
+            // 生成0.5的倍数作为系数
+            const scale = [0.5, 1, 1.5, 2][Math.floor(Math.random() * 4)];
+            
+            // 生成基础整数
+            let aInt = getRandomIntNonZero(-limit, limit);
+            let bInt = getRandomIntNonZero(-limit, limit);
+            
+            // 应用小数倍数
+            const a = aInt * scale;
+            const b = bInt * scale;
+            
+            // 计算c
+            const c = a * x + b * y;
+            
+            return [a, b, c];
+        }
+        
+        // 更新题目显示
+        function updateProblemDisplay() {
+            if (!currentSystem) return;
+            
+            const eq1 = currentSystem.eq1;
+            const eq2 = currentSystem.eq2;
+            
+            // 格式化系数显示
+            const formatCoeff = (coeff, isFirst = false) => {
+                if (currentSystem.type === 'fraction') {
+                    // 对于分数类型，我们可能需要特殊显示
+                    if (coeff % 1 !== 0) {
+                        // 简化分数显示
+                        const fraction = toFraction(coeff);
+                        if (fraction[1] === 1) return fraction[0];
+                        return `${fraction[0]}/${fraction[1]}`;
+                    }
+                } else if (currentSystem.type === 'decimal') {
+                    // 保留一位小数
+                    return coeff % 1 === 0 ? coeff : coeff.toFixed(1);
+                }
+                
+                // 整数显示
+                if (coeff === 1 && !isFirst) return '';
+                if (coeff === -1 && !isFirst) return '-';
+                return coeff;
+            };
+            
+            // 格式化项
+            const formatTerm = (coeff, variable, isFirst) => {
+                const formattedCoeff = formatCoeff(coeff, isFirst);
+                
+                if (formattedCoeff === 0) return '';
+                
+                let sign = '';
+                if (!isFirst) {
+                    sign = coeff >= 0 ? ' + ' : ' - ';
+                } else if (coeff < 0) {
+                    sign = '-';
+                }
+                
+                const absCoeff = Math.abs(coeff);
+                const coeffDisplay = formatCoeff(absCoeff, isFirst);
+                
+                if (coeffDisplay === '' || coeffDisplay === '1') {
+                    return sign + variable;
+                } else {
+                    return sign + coeffDisplay + variable;
+                }
+            };
+            
+            // 构建方程字符串
+            const eq1Str = `${formatTerm(eq1.a, 'x', true)}${formatTerm(eq1.b, 'y', false)} = ${eq1.c}`;
+            const eq2Str = `${formatTerm(eq2.a, 'x', true)}${formatTerm(eq2.b, 'y', false)} = ${eq2.c}`;
+            
+            // 更新显示
+            equation1.textContent = eq1Str;
+            equation2.textContent = eq2Str;
+        }
+        
+        // 将小数转换为分数
+        function toFraction(decimal) {
+            // 简单实现：只处理0.5, 0.25, 0.75等常见小数
+            const tolerance = 1.0E-6;
+            
+            if (Math.abs(decimal - 0.5) < tolerance) return [1, 2];
+            if (Math.abs(decimal - 0.25) < tolerance) return [1, 4];
+            if (Math.abs(decimal - 0.75) < tolerance) return [3, 4];
+            if (Math.abs(decimal - 0.2) < tolerance) return [1, 5];
+            if (Math.abs(decimal - 0.4) < tolerance) return [2, 5];
+            if (Math.abs(decimal - 0.6) < tolerance) return [3, 5];
+            if (Math.abs(decimal - 0.8) < tolerance) return [4, 5];
+            
+            // 默认返回整数
+            return [Math.round(decimal), 1];
+        }
+        
+        // 生成解题步骤
+        function generateSolutionSteps() {
+            if (!currentSystem) return;
+            
+            const eq1 = currentSystem.eq1;
+            const eq2 = currentSystem.eq2;
+            const solution = currentSystem.solution;
+            
+            solutionSteps = [];
+            
+            // 步骤1: 选择解法
+            solutionSteps.push({
+                title: "步骤 1: 选择解法",
+                content: `我们可以使用代入法或消元法解这个方程组。这里我们使用消元法。`
+            });
+            
+            // 步骤2: 准备消元
+            // 找出最小公倍数以便消元
+            const lcmA = lcm(Math.abs(eq1.a), Math.abs(eq2.a));
+            const lcmB = lcm(Math.abs(eq1.b), Math.abs(eq2.b));
+            
+            let step2Content = "将方程乘以适当的系数，使某个未知数的系数相等或互为相反数。<br>";
+            
+            // 决定消去x还是y
+            const eliminateX = Math.abs(eq1.a) <= Math.abs(eq2.a) && Math.abs(eq1.b) !== Math.abs(eq2.b);
+            
+            if (eliminateX) {
+                const factor1 = lcmA / Math.abs(eq1.a) * (eq1.a < 0 ? -1 : 1);
+                const factor2 = lcmA / Math.abs(eq2.a) * (eq2.a < 0 ? -1 : 1) * -1;
+                
+                const newEq1A = eq1.a * factor1;
+                const newEq1B = eq1.b * factor1;
+                const newEq1C = eq1.c * factor1;
+                
+                const newEq2A = eq2.a * factor2;
+                const newEq2B = eq2.b * factor2;
+                const newEq2C = eq2.c * factor2;
+                
+                step2Content += `将第一个方程乘以${factor1}，第二个方程乘以${factor2}：<br>`;
+                step2Content += `${formatTerm(newEq1A, 'x', true)}${formatTerm(newEq1B, 'y', false)} = ${newEq1C}<br>`;
+                step2Content += `${formatTerm(newEq2A, 'x', true)}${formatTerm(newEq2B, 'y', false)} = ${newEq2C}`;
+            } else {
+                const factor1 = lcmB / Math.abs(eq1.b) * (eq1.b < 0 ? -1 : 1);
+                const factor2 = lcmB / Math.abs(eq2.b) * (eq2.b < 0 ? -1 : 1) * -1;
+                
+                const newEq1A = eq1.a * factor1;
+                const newEq1B = eq1.b * factor1;
+                const newEq1C = eq1.c * factor1;
+                
+                const newEq2A = eq2.a * factor2;
+                const newEq2B = eq2.b * factor2;
+                const newEq2C = eq2.c * factor2;
+                
+                step2Content += `将第一个方程乘以${factor1}，第二个方程乘以${factor2}：<br>`;
+                step2Content += `${formatTerm(newEq1A, 'x', true)}${formatTerm(newEq1B, 'y', false)} = ${newEq1C}<br>`;
+                step2Content += `${formatTerm(newEq2A, 'x', true)}${formatTerm(newEq2B, 'y', false)} = ${newEq2C}`;
+            }
+            
+            solutionSteps.push({
+                title: "步骤 2: 准备消元",
+                content: step2Content
+            });
+            
+            // 步骤3: 消元
+            let step3Content = "";
+            if (eliminateX) {
+                step3Content = `将两个方程相加，消去x：<br>`;
+                step3Content += `(${eq1.a * (lcmA / Math.abs(eq1.a))}x + ${eq1.b * (lcmA / Math.abs(eq1.a))}y) + (${eq2.a * (lcmA / Math.abs(eq2.a) * -1)}x + ${eq2.b * (lcmA / Math.abs(eq2.a) * -1)}y) = ${eq1.c * (lcmA / Math.abs(eq1.a))} + ${eq2.c * (lcmA / Math.abs(eq2.a) * -1)}<br>`;
+                step3Content += `得到：${(eq1.b * (lcmA / Math.abs(eq1.a)) + eq2.b * (lcmA / Math.abs(eq2.a) * -1))}y = ${eq1.c * (lcmA / Math.abs(eq1.a)) + eq2.c * (lcmA / Math.abs(eq2.a) * -1)}<br>`;
+                step3Content += `所以：y = ${solution.y}`;
+            } else {
+                step3Content = `将两个方程相加，消去y：<br>`;
+                step3Content += `(${eq1.a * (lcmB / Math.abs(eq1.b))}x + ${eq1.b * (lcmB / Math.abs(eq1.b))}y) + (${eq2.a * (lcmB / Math.abs(eq2.b) * -1)}x + ${eq2.b * (lcmB / Math.abs(eq2.b) * -1)}y) = ${eq1.c * (lcmB / Math.abs(eq1.b))} + ${eq2.c * (lcmB / Math.abs(eq2.b) * -1)}<br>`;
+                step3Content += `得到：${(eq1.a * (lcmB / Math.abs(eq1.b)) + eq2.a * (lcmB / Math.abs(eq2.b) * -1))}x = ${eq1.c * (lcmB / Math.abs(eq1.b)) + eq2.c * (lcmB / Math.abs(eq2.b) * -1)}<br>`;
+                step3Content += `所以：x = ${solution.x}`;
+            }
+            
+            solutionSteps.push({
+                title: "步骤 3: 消元求解",
+                content: step3Content
+            });
+            
+            // 步骤4: 求另一个未知数
+            let step4Content = "";
+            if (eliminateX) {
+                step4Content = `将y = ${solution.y}代入第一个方程：<br>`;
+                step4Content += `${eq1.a}x + ${eq1.b} × ${solution.y} = ${eq1.c}<br>`;
+                step4Content += `${eq1.a}x + ${eq1.b * solution.y} = ${eq1.c}<br>`;
+                step4Content += `${eq1.a}x = ${eq1.c - eq1.b * solution.y}<br>`;
+                step4Content += `x = ${solution.x}`;
+            } else {
+                step4Content = `将x = ${solution.x}代入第一个方程：<br>`;
+                step4Content += `${eq1.a} × ${solution.x} + ${eq1.b}y = ${eq1.c}<br>`;
+                step4Content += `${eq1.a * solution.x} + ${eq1.b}y = ${eq1.c}<br>`;
+                step4Content += `${eq1.b}y = ${eq1.c - eq1.a * solution.x}<br>`;
+                step4Content += `y = ${solution.y}`;
+            }
+            
+            solutionSteps.push({
+                title: "步骤 4: 求另一个未知数",
+                content: step4Content
+            });
+            
+            // 步骤5: 验证解
+            const verify1 = eq1.a * solution.x + eq1.b * solution.y;
+            const verify2 = eq2.a * solution.x + eq2.b * solution.y;
+            
+            solutionSteps.push({
+                title: "步骤 5: 验证解",
+                content: `将x = ${solution.x}, y = ${solution.y}代入原方程组验证：<br>
+                第一式：${eq1.a} × ${solution.x} + ${eq1.b} × ${solution.y} = ${verify1} ${verify1 === eq1.c ? '✓' : '✗'}<br>
+                第二式：${eq2.a} × ${solution.x} + ${eq2.b} × ${solution.y} = ${verify2} ${verify2 === eq2.c ? '✓' : '✗'}<br>
+                所以解${verify1 === eq1.c && verify2 === eq2.c ? '正确' : '错误'}。`
+            });
+            
+            // 更新答案显示
+            correctAnswerElement.textContent = `x = ${solution.x}, y = ${solution.y}`;
+        }
+        
+        // 显示解题步骤
+        function showSolutionSteps() {
+            // 隐藏所有步骤
+            stepElements.forEach(step => step.classList.remove('active'));
+            
+            // 显示第一步
+            stepElements[0].classList.add('active');
+            
+            // 设置定时器逐步显示后续步骤
+            let stepIndex = 0;
+            const stepInterval = setInterval(() => {
+                stepIndex++;
+                if (stepIndex < stepElements.length) {
+                    stepElements[stepIndex].classList.add('active');
+                } else {
+                    clearInterval(stepInterval);
+                }
+            }, 1500);
+        }
+        
+        // 显示答案
+        function showAnswer() {
+            answerDisplay.classList.add('show');
+        }
+        
+        // 检查答案
+        function checkAnswer() {
+            submitAnswer();
+        }
+        
+        // 提交答案
+        function submitAnswer() {
+            if (!currentSystem) return;
+            
+            const userX = parseFloat(xValueInput.value);
+            const userY = parseFloat(yValueInput.value);
+            const solution = currentSystem.solution;
+            
+            if (isNaN(userX) || isNaN(userY)) {
+                resultMessage.textContent = "请输入有效的x和y值！";
+                resultMessage.className = "result-message incorrect";
+                resultMessage.style.display = "block";
+                return;
+            }
+            
+            // 检查答案是否正确（允许小数误差）
+            const epsilon = 0.0001;
+            const xCorrect = Math.abs(userX - solution.x) < epsilon;
+            const yCorrect = Math.abs(userY - solution.y) < epsilon;
+            
+            if (xCorrect && yCorrect) {
+                resultMessage.textContent = "正确！答案准确无误。";
+                resultMessage.className = "result-message correct";
+                correctAnswers++;
+                updateStats();
+            } else {
+                resultMessage.textContent = `不正确。正确答案是 x = ${solution.x}, y = ${solution.y}`;
+                resultMessage.className = "result-message incorrect";
+            }
+            
+            resultMessage.style.display = "block";
+        }
+        
+        // 添加到历史记录
+        function addToHistory() {
+            if (!currentSystem) return;
+            
+            const eq1 = currentSystem.eq1;
+            const eq2 = currentSystem.eq2;
+            const solution = currentSystem.solution;
+            
+            const eq1Str = `${eq1.a}x + ${eq1.b}y = ${eq1.c}`;
+            const eq2Str = `${eq2.a}x + ${eq2.b}y = ${eq2.c}`;
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = `${eq1Str}, ${eq2Str} (x=${solution.x}, y=${solution.y})`;
+            
+            // 添加到列表顶部
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            // 限制历史记录数量
+            if (historyList.children.length > 10) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+        
+        // 更新统计
+        function updateStats() {
+            totalProblemsElement.textContent = totalProblems;
+            correctAnswersElement.textContent = correctAnswers;
+        }
+        
+        // 辅助函数：获取随机整数
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        // 辅助函数：获取随机非零整数
+        function getRandomIntNonZero(min, max) {
+            let num = 0;
+            do {
+                num = getRandomInt(min, max);
+            } while (num === 0);
+            return num;
+        }
+        
+        // 辅助函数：计算最小公倍数
+        function lcm(a, b) {
+            return Math.abs(a * b) / gcd(a, b);
+        }
+        
+        // 辅助函数：计算最大公约数
+        function gcd(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            
+            while (b) {
+                const t = b;
+                b = a % b;
+                a = t;
+            }
+            return a;
+        }
+        
+        // 格式化项（用于步骤生成）
+        function formatTerm(coeff, variable, isFirst) {
+            if (coeff === 0) return '';
+            
+            let sign = '';
+            if (!isFirst) {
+                sign = coeff >= 0 ? ' + ' : ' - ';
+            } else if (coeff < 0) {
+                sign = '-';
+            }
+            
+            const absCoeff = Math.abs(coeff);
+            const coeffDisplay = absCoeff === 1 ? '' : absCoeff;
+            
+            return sign + coeffDisplay + variable;
+        }
+        
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二次函数配方法出题器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #d1913c, #ffd194);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .control-panel {
+            background: #f9f5f0;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 1.6rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d1913c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group h3 {
+            color: #d1913c;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 15px;
+            background: #f5e9dc;
+            border: 2px solid #d1b38c;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .difficulty-btn:hover {
+            background: #ebddcc;
+        }
+        
+        .difficulty-btn.active {
+            background: #d1913c;
+            color: white;
+            border-color: #b3762a;
+        }
+        
+        .type-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .type-btn {
+            padding: 12px;
+            background: #f5e9dc;
+            border: 2px solid #d1b38c;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .type-btn:hover {
+            background: #ebddcc;
+        }
+        
+        .type-btn.active {
+            background: #8fbc8f;
+            color: white;
+            border-color: #7ba87b;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #d1913c, #b3762a);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .generate-btn:hover {
+            background: linear-gradient(90deg, #b3762a, #d1913c);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(209, 145, 60, 0.3);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #d1913c;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .problem-section {
+            background: #f9f5f0;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .equation-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #d1913c;
+        }
+        
+        .function-display {
+            font-size: 1.8rem;
+            text-align: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .function-type {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+        
+        .function-type-item {
+            text-align: center;
+        }
+        
+        .function-type-title {
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 5px;
+        }
+        
+        .solution-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #8fbc8f;
+        }
+        
+        .solution-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .solution-btn {
+            padding: 12px 20px;
+            background: #f5e9dc;
+            border: 2px solid #d1b38c;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 150px;
+            justify-content: center;
+        }
+        
+        .solution-btn:hover {
+            background: #ebddcc;
+        }
+        
+        .solution-btn.primary {
+            background: #d1913c;
+            color: white;
+            border-color: #b3762a;
+        }
+        
+        .solution-btn.primary:hover {
+            background: #b3762a;
+        }
+        
+        .solution-btn.success {
+            background: #8fbc8f;
+            color: white;
+            border-color: #7ba87b;
+        }
+        
+        .solution-btn.success:hover {
+            background: #7ba87b;
+        }
+        
+        .solution-step {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f5f0;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .solution-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #d1913c;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .step-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .step-equation {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .answer-input {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group label {
+            font-weight: bold;
+            color: #8b4513;
+            min-width: 80px;
+        }
+        
+        .input-group input {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            width: 120px;
+            text-align: center;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #d1913c;
+        }
+        
+        .check-btn {
+            padding: 12px 25px;
+            background: #8fbc8f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .check-btn:hover {
+            background: #7ba87b;
+            transform: translateY(-2px);
+        }
+        
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .result-message.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .result-message.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .answer-display {
+            background: #f9f5f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .answer-display.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .answer-title {
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .answer-content {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d1913c;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            text-align: center;
+        }
+        
+        footer {
+            background: #8b4513;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .theory-box {
+            background: #fff8e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid #ffb300;
+        }
+        
+        .theory-box h3 {
+            color: #ff8f00;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .theory-content {
+            color: #5d4037;
+            line-height: 1.6;
+        }
+        
+        .tips {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .tips h4 {
+            color: #2e7d32;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .history {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+        
+        .history h3 {
+            color: #8b4513;
+            margin-bottom: 15px;
+        }
+        
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .coefficient-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .range-value {
+            font-weight: bold;
+            color: #d1913c;
+            min-width: 40px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #d1913c;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .fraction-input {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .fraction-input input {
+            width: 60px;
+        }
+        
+        .fraction-symbol {
+            font-size: 1.2rem;
+        }
+        
+        .formula-box {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 1.1rem;
+        }
+        
+        .vertex-formula {
+            color: #1565c0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-function"></i> 二次函数配方法出题器</h1>
+            <p class="subtitle">使用配方法将二次函数一般式 y = ax² + bx + c 转换为顶点式 y = a(x - h)² + k</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                <h2 class="section-title"><i class="fas fa-sliders-h"></i> 出题设置</h2>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-chart-line"></i> 难度级别</h3>
+                    <div class="difficulty-buttons">
+                        <div class="difficulty-btn active" data-level="easy">简单</div>
+                        <div class="difficulty-btn" data-level="medium">中等</div>
+                        <div class="difficulty-btn" data-level="hard">困难</div>
+                        <div class="difficulty-btn" data-level="random">随机</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-shapes"></i> 题型选择</h3>
+                    <div class="type-buttons">
+                        <div class="type-btn active" data-type="standard">整数系数</div>
+                        <div class="type-btn" data-type="fraction">分数系数</div>
+                        <div class="type-btn" data-type="decimal">小数系数</div>
+                        <div class="type-btn" data-type="word">应用题</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-exchange-alt"></i> 系数范围</h3>
+                    <div class="coefficient-range">
+                        <span>系数范围:</span>
+                        <input type="range" id="coeffRange" min="1" max="20" value="10">
+                        <span class="range-value" id="coeffValue">1~10</span>
+                    </div>
+                    <div class="tips">
+                        <h4><i class="fas fa-lightbulb"></i> 提示</h4>
+                        <p>系数范围越小，配方法越容易；范围越大，计算越具有挑战性。</p>
+                    </div>
+                </div>
+                
+                <button class="generate-btn" id="generateBtn">
+                    <i class="fas fa-random"></i> 生成新题目
+                </button>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalProblems">0</div>
+                        <div class="stat-label">生成题目总数</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="correctAnswers">0</div>
+                        <div class="stat-label">正确解答数</div>
+                    </div>
+                </div>
+                
+                <div class="theory-box">
+                    <h3><i class="fas fa-book"></i> 配方法知识</h3>
+                    <div class="theory-content">
+                        <p><strong>配方法步骤：</strong></p>
+                        <ol>
+                            <li>提取二次项系数 a（如果 a ≠ 1）</li>
+                            <li>加上并减去一次项系数一半的平方 (b/2a)²</li>
+                            <li>将前三项写成完全平方形式</li>
+                            <li>化简常数项得到顶点式</li>
+                        </ol>
+                        <div class="formula-box">
+                            顶点坐标公式：h = -b/(2a), k = c - b²/(4a)
+                            <div class="vertex-formula">y = a(x - h)² + k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="problem-section">
+                <h2 class="section-title"><i class="fas fa-question-circle"></i> 当前题目</h2>
+                
+                <div class="equation-container">
+                    <div class="function-type">
+                        <div class="function-type-item">
+                            <div class="function-type-title">一般式</div>
+                            <div class="function-display" id="generalForm">y = x² + 4x + 3</div>
+                        </div>
+                        <div class="function-type-item">
+                            <div class="function-type-title">目标：顶点式</div>
+                            <div class="function-display" id="targetForm">y = a(x - h)² + k</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-section">
+                    <h2 class="section-title"><i class="fas fa-graduation-cap"></i> 解题过程</h2>
+                    
+                    <div class="solution-controls">
+                        <button class="solution-btn primary" id="showStepsBtn">
+                            <i class="fas fa-list-ol"></i> 显示解题步骤
+                        </button>
+                        <button class="solution-btn" id="showAnswerBtn">
+                            <i class="fas fa-eye"></i> 显示答案
+                        </button>
+                        <button class="solution-btn success" id="checkAnswerBtn">
+                            <i class="fas fa-check"></i> 检查答案
+                        </button>
+                    </div>
+                    
+                    <div class="solution-step" id="step1">
+                        <div class="step-title"><i class="fas fa-1"></i> 步骤 1: 提取二次项系数</div>
+                        <div class="step-content">
+                            观察一般式：y = x² + 4x + 3<br>
+                            二次项系数 a = 1，所以不需要提取。
+                        </div>
+                        <div class="step-equation" id="step1Equation">y = x² + 4x + 3</div>
+                    </div>
+                    
+                    <div class="solution-step" id="step2">
+                        <div class="step-title"><i class="fas fa-2"></i> 步骤 2: 配方准备</div>
+                        <div class="step-content">
+                            我们需要将 x² + 4x 部分配成完全平方。<br>
+                            一次项系数是 4，它的一半是 2，平方是 4。<br>
+                            所以加上并减去 4。
+                        </div>
+                        <div class="step-equation" id="step2Equation">y = (x² + 4x + 4) - 4 + 3</div>
+                    </div>
+                    
+                    <div class="solution-step" id="step3">
+                        <div class="step-title"><i class="fas fa-3"></i> 步骤 3: 写成完全平方</div>
+                        <div class="step-content">
+                            将前三项写成完全平方形式：(x + 2)²<br>
+                            合并常数项：-4 + 3 = -1
+                        </div>
+                        <div class="step-equation" id="step3Equation">y = (x + 2)² - 1</div>
+                    </div>
+                    
+                    <div class="solution-step" id="step4">
+                        <div class="step-title"><i class="fas fa-4"></i> 步骤 4: 化为标准顶点式</div>
+                        <div class="step-content">
+                            将完全平方形式写成标准顶点式 y = a(x - h)² + k<br>
+                            注意：(x + 2)² = (x - (-2))²<br>
+                            所以 h = -2, k = -1
+                        </div>
+                        <div class="step-equation" id="step4Equation">y = (x - (-2))² + (-1)</div>
+                    </div>
+                    
+                    <div class="solution-step" id="step5">
+                        <div class="step-title"><i class="fas fa-5"></i> 步骤 5: 最终结果</div>
+                        <div class="step-content">
+                            简化得到顶点式，并写出顶点坐标。
+                        </div>
+                        <div class="step-equation" id="step5Equation">顶点式: y = (x + 2)² - 1<br>顶点坐标: (-2, -1)</div>
+                    </div>
+                    
+                    <div class="answer-input">
+                        <h3><i class="fas fa-pencil-alt"></i> 输入顶点式参数</h3>
+                        <div class="input-group">
+                            <label for="aValue">a = </label>
+                            <input type="number" id="aValue" placeholder="二次项系数" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label for="hValue">h = </label>
+                            <input type="number" id="hValue" placeholder="顶点横坐标" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label for="kValue">k = </label>
+                            <input type="number" id="kValue" placeholder="顶点纵坐标" step="0.1">
+                        </div>
+                        <button class="check-btn" id="submitAnswerBtn">
+                            <i class="fas fa-check-circle"></i> 提交答案
+                        </button>
+                        
+                        <div class="result-message" id="resultMessage"></div>
+                    </div>
+                    
+                    <div class="answer-display" id="answerDisplay">
+                        <div class="answer-title">正确答案：</div>
+                        <div class="answer-content" id="correctAnswer">
+                            y = (x + 2)² - 1<br>
+                            顶点坐标: (-2, -1)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="history">
+                    <h3><i class="fas fa-history"></i> 题目历史</h3>
+                    <div class="history-list" id="historyList">
+                        <div class="history-item">y = x² + 4x + 3 → y = (x + 2)² - 1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>二次函数配方法出题器 &copy; 2023 | 专为数学学习设计 | 确保配方法后结果为整数或简单分数</p>
+            <p>提示：本工具生成的二次函数配方法后结果为整数或简单分数，适合练习和教学使用</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentDifficulty = 'easy';
+        let currentType = 'standard';
+        let currentCoeffRange = 10;
+        let totalProblems = 0;
+        let correctAnswers = 0;
+        let currentFunction = null;
+        let solutionSteps = [];
+        let problemHistory = [];
+        
+        // DOM元素
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        const typeButtons = document.querySelectorAll('.type-btn');
+        const generateBtn = document.getElementById('generateBtn');
+        const showStepsBtn = document.getElementById('showStepsBtn');
+        const showAnswerBtn = document.getElementById('showAnswerBtn');
+        const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+        const generalForm = document.getElementById('generalForm');
+        const targetForm = document.getElementById('targetForm');
+        const stepElements = document.querySelectorAll('.solution-step');
+        const step1Equation = document.getElementById('step1Equation');
+        const step2Equation = document.getElementById('step2Equation');
+        const step3Equation = document.getElementById('step3Equation');
+        const step4Equation = document.getElementById('step4Equation');
+        const step5Equation = document.getElementById('step5Equation');
+        const aValueInput = document.getElementById('aValue');
+        const hValueInput = document.getElementById('hValue');
+        const kValueInput = document.getElementById('kValue');
+        const resultMessage = document.getElementById('resultMessage');
+        const answerDisplay = document.getElementById('answerDisplay');
+        const correctAnswerElement = document.getElementById('correctAnswer');
+        const historyList = document.getElementById('historyList');
+        const totalProblemsElement = document.getElementById('totalProblems');
+        const correctAnswersElement = document.getElementById('correctAnswers');
+        const coeffRangeInput = document.getElementById('coeffRange');
+        const coeffValueElement = document.getElementById('coeffValue');
+        
+        // 初始化
+        function init() {
+            // 设置初始系数范围
+            updateCoeffRange();
+            
+            // 生成第一个题目
+            generateNewProblem();
+            
+            // 更新统计
+            updateStats();
+            
+            // 事件监听器
+            setupEventListeners();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 难度按钮
+            difficultyButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    difficultyButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDifficulty = this.getAttribute('data-level');
+                    generateNewProblem();
+                });
+            });
+            
+            // 题型按钮
+            typeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    typeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.getAttribute('data-type');
+                    generateNewProblem();
+                });
+            });
+            
+            // 生成新题目按钮
+            generateBtn.addEventListener('click', generateNewProblem);
+            
+            // 显示解题步骤按钮
+            showStepsBtn.addEventListener('click', showSolutionSteps);
+            
+            // 显示答案按钮
+            showAnswerBtn.addEventListener('click', showAnswer);
+            
+            // 检查答案按钮
+            checkAnswerBtn.addEventListener('click', checkAnswer);
+            
+            // 提交答案按钮
+            submitAnswerBtn.addEventListener('click', submitAnswer);
+            
+            // 系数范围滑块
+            coeffRangeInput.addEventListener('input', updateCoeffRange);
+        }
+        
+        // 更新系数范围显示
+        function updateCoeffRange() {
+            currentCoeffRange = parseInt(coeffRangeInput.value);
+            coeffValueElement.textContent = `1~${currentCoeffRange}`;
+        }
+        
+        // 生成新的二次函数（确保配方法后结果为整数或简单分数）
+        function generateNewProblem() {
+            // 根据难度级别设置参数
+            let coeffLimit, a, b, c;
+            
+            switch(currentDifficulty) {
+                case 'easy':
+                    coeffLimit = Math.min(5, currentCoeffRange);
+                    // 简单：a=1，b为偶数，c为整数
+                    a = 1;
+                    b = getRandomEvenInt(-coeffLimit, coeffLimit);
+                    // 确保配方后k为整数
+                    c = getRandomInt(-coeffLimit, coeffLimit);
+                    break;
+                    
+                case 'medium':
+                    coeffLimit = Math.min(10, currentCoeffRange);
+                    // 中等：a为整数（不为1），b为2a的倍数，c为整数
+                    a = getRandomIntNonZero(-coeffLimit, coeffLimit);
+                    while (a === 1 || a === -1) {
+                        a = getRandomIntNonZero(-coeffLimit, coeffLimit);
+                    }
+                    // b需要是2a的倍数，确保配方过程中不出现分数
+                    const multiple = getRandomInt(-coeffLimit/2, coeffLimit/2);
+                    b = 2 * a * multiple;
+                    // 计算c使k为整数
+                    const h = -b / (2 * a);
+                    const k = getRandomInt(-coeffLimit, coeffLimit);
+                    c = a * h * h + k;
+                    break;
+                    
+                case 'hard':
+                    coeffLimit = Math.min(currentCoeffRange, 20);
+                    // 困难：a为整数，b不一定为2a的倍数，配方后可能有分数
+                    a = getRandomIntNonZero(-coeffLimit, coeffLimit);
+                    b = getRandomInt(-coeffLimit, coeffLimit);
+                    // 计算h和k，确保k为简单分数
+                    const hNumerator = getRandomInt(-coeffLimit*2, coeffLimit*2);
+                    const hDenominator = getRandomElement([2, 3, 4]);
+                    const hValue = hNumerator / hDenominator;
+                    
+                    const kNumerator = getRandomInt(-coeffLimit*2, coeffLimit*2);
+                    const kDenominator = getRandomElement([2, 3, 4]);
+                    const kValue = kNumerator / kDenominator;
+                    
+                    c = a * hValue * hValue + kValue;
+                    // 调整c为整数或简单分数
+                    c = Math.round(c * 4) / 4;
+                    break;
+                    
+                case 'random':
+                    coeffLimit = Math.floor(Math.random() * currentCoeffRange) + 1;
+                    a = getRandomIntNonZero(-coeffLimit, coeffLimit);
+                    b = getRandomInt(-coeffLimit*2, coeffLimit*2);
+                    c = getRandomInt(-coeffLimit*2, coeffLimit*2);
+                    break;
+                    
+                default:
+                    coeffLimit = 10;
+                    a = 1;
+                    b = getRandomEvenInt(-5, 5);
+                    c = getRandomInt(-5, 5);
+            }
+            
+            // 根据题型调整系数
+            if (currentType === 'fraction') {
+                // 分数系数：将系数转换为简单分数
+                a = convertToSimpleFraction(a);
+                b = convertToSimpleFraction(b);
+                c = convertToSimpleFraction(c);
+            } else if (currentType === 'decimal') {
+                // 小数系数：将系数转换为一位小数
+                a = Math.round(a * 2) / 2;
+                b = Math.round(b * 2) / 2;
+                c = Math.round(c * 2) / 2;
+            }
+            
+            // 存储当前函数
+            currentFunction = {
+                a: a,
+                b: b,
+                c: c,
+                type: currentType,
+                difficulty: currentDifficulty
+            };
+            
+            // 计算顶点式
+            const vertexForm = completeTheSquare(a, b, c);
+            currentFunction.vertex = vertexForm;
+            
+            // 更新题目显示
+            updateProblemDisplay();
+            
+            // 生成解题步骤
+            generateSolutionSteps();
+            
+            // 隐藏答案和结果
+            answerDisplay.classList.remove('show');
+            resultMessage.className = 'result-message';
+            resultMessage.style.display = 'none';
+            
+            // 清空输入框
+            aValueInput.value = '';
+            hValueInput.value = '';
+            kValueInput.value = '';
+            
+            // 重置步骤显示
+            stepElements.forEach(step => step.classList.remove('active'));
+            
+            // 增加题目计数
+            totalProblems++;
+            updateStats();
+            
+            // 添加到历史记录
+            addToHistory();
+        }
+        
+        // 将整数转换为简单分数
+        function convertToSimpleFraction(value) {
+            if (value === 0) return 0;
+            
+            // 随机决定是否转换为分数
+            if (Math.random() > 0.5) {
+                const denominator = getRandomElement([2, 3, 4]);
+                const numerator = Math.round(value * denominator);
+                return numerator / denominator;
+            }
+            return value;
+        }
+        
+        // 配方法：将一般式转换为顶点式
+        function completeTheSquare(a, b, c) {
+            // 计算顶点坐标
+            const h = -b / (2 * a);
+            const k = c - (b * b) / (4 * a);
+            
+            // 格式化顶点式
+            return {
+                a: a,
+                h: h,
+                k: k,
+                string: formatVertexForm(a, h, k)
+            };
+        }
+        
+        // 格式化顶点式字符串
+        function formatVertexForm(a, h, k) {
+            let aStr = formatCoefficient(a, true);
+            let hStr = formatNumber(h);
+            let kStr = formatNumber(k);
+            
+            // 处理符号
+            const hSign = h >= 0 ? '-' : '+';
+            const hAbs = Math.abs(h);
+            const hDisplay = formatNumber(hAbs);
+            
+            const kSign = k >= 0 ? '+' : '-';
+            const kAbs = Math.abs(k);
+            const kDisplay = formatNumber(kAbs);
+            
+            // 构建顶点式字符串
+            let vertexStr = `y = ${aStr}(x ${hSign} ${hDisplay})²`;
+            
+            if (k !== 0) {
+                vertexStr += ` ${kSign} ${kDisplay}`;
+            }
+            
+            // 简化：如果a=1，省略系数；如果a=-1，只显示负号
+            vertexStr = vertexStr.replace('1(', '(').replace('-1(', '-(');
+            
+            // 简化：如果h=0，简化为x²
+            if (h === 0) {
+                vertexStr = vertexStr.replace('(x - 0)', 'x').replace('(x + 0)', 'x');
+            }
+            
+            // 简化：去掉多余的符号
+            vertexStr = vertexStr.replace('+ -', '- ').replace('- +', '- ');
+            
+            return vertexStr;
+        }
+        
+        // 格式化系数 - 修复：常数项应该总是显示数字，不省略1
+        function formatCoefficient(value, isFirst = false, isConstant = false) {
+            // 如果是常数项，总是显示数字，不省略1
+            if (isConstant) {
+                return formatNumber(value);
+            }
+            
+            if (currentType === 'fraction' && value % 1 !== 0) {
+                // 将小数转换为分数
+                const fraction = toFraction(value);
+                if (fraction[1] === 1) return fraction[0];
+                return `${fraction[0]}/${fraction[1]}`;
+            } else if (currentType === 'decimal' && value % 1 !== 0) {
+                // 保留一位小数
+                return value.toFixed(1);
+            }
+            
+            // 整数显示 - 对于变量系数，1可以省略（除了是第一个且为正数的情况）
+            if (value === 1 && !isFirst) return '';
+            if (value === -1 && !isFirst) return '-';
+            return value;
+        }
+        
+        // 格式化数字 - 总是显示数字，不省略1
+        function formatNumber(value) {
+            if (currentType === 'fraction' && value % 1 !== 0) {
+                // 将小数转换为分数
+                const fraction = toFraction(value);
+                if (fraction[1] === 1) return fraction[0];
+                return `${fraction[0]}/${fraction[1]}`;
+            } else if (currentType === 'decimal' && value % 1 !== 0) {
+                // 保留一位小数
+                return value.toFixed(1);
+            }
+            return value;
+        }
+        
+        // 将小数转换为分数
+        function toFraction(decimal) {
+            const tolerance = 1.0E-6;
+            
+            // 常见小数转换
+            if (Math.abs(decimal - 0.5) < tolerance) return [1, 2];
+            if (Math.abs(decimal - 0.25) < tolerance) return [1, 4];
+            if (Math.abs(decimal - 0.75) < tolerance) return [3, 4];
+            if (Math.abs(decimal - 0.2) < tolerance) return [1, 5];
+            if (Math.abs(decimal - 0.4) < tolerance) return [2, 5];
+            if (Math.abs(decimal - 0.6) < tolerance) return [3, 5];
+            if (Math.abs(decimal - 0.8) < tolerance) return [4, 5];
+            if (Math.abs(decimal - 0.333) < tolerance) return [1, 3];
+            if (Math.abs(decimal - 0.667) < tolerance) return [2, 3];
+            
+            // 尝试转换为分数
+            for (let denom = 1; denom <= 10; denom++) {
+                const numer = Math.round(decimal * denom);
+                if (Math.abs(decimal - numer/denom) < tolerance) {
+                    return [numer, denom];
+                }
+            }
+            
+            // 默认返回整数
+            return [Math.round(decimal), 1];
+        }
+        
+        // 更新题目显示 - 修复：常数项应该总是显示数字
+        function updateProblemDisplay() {
+            if (!currentFunction) return;
+            
+            const a = currentFunction.a;
+            const b = currentFunction.b;
+            const c = currentFunction.c;
+            
+            // 格式化一般式
+            const aStr = formatCoefficient(a, true, false);
+            const bStr = formatCoefficient(b, false, false);
+            // 常数项总是显示数字
+            const cStr = formatNumber(c);
+            
+            // 构建一般式字符串
+            let generalStr = `y = ${aStr}x²`;
+            
+            if (b !== 0) {
+                const bSign = b >= 0 ? '+' : '-';
+                const bAbs = Math.abs(b);
+                const bDisplay = formatCoefficient(bAbs, false, false);
+                generalStr += ` ${bSign} ${bDisplay}x`;
+            }
+            
+            if (c !== 0) {
+                const cSign = c >= 0 ? '+' : '-';
+                const cAbs = Math.abs(c);
+                const cDisplay = formatNumber(cAbs); // 使用formatNumber而不是formatCoefficient
+                generalStr += ` ${cSign} ${cDisplay}`;
+            } else {
+                // 如果c为0，不需要显示
+                generalStr += '';
+            }
+            
+            // 简化：去掉多余的符号和系数1
+            generalStr = generalStr.replace(' 1x²', ' x²').replace('-1x²', '-x²');
+            generalStr = generalStr.replace('+ -', '- ');
+            
+            // 更新显示
+            generalForm.textContent = generalStr;
+            targetForm.textContent = "y = a(x - h)² + k";
+        }
+        
+        // 生成解题步骤
+        function generateSolutionSteps() {
+            if (!currentFunction) return;
+            
+            const a = currentFunction.a;
+            const b = currentFunction.b;
+            const c = currentFunction.c;
+            const vertex = currentFunction.vertex;
+            
+            // 步骤1: 提取二次项系数
+            let step1Content = `观察一般式：y = ${formatCoefficient(a, true, false)}x²`;
+            if (b !== 0) {
+                const bSign = b >= 0 ? '+' : '-';
+                const bAbs = Math.abs(b);
+                step1Content += ` ${bSign} ${formatCoefficient(bAbs, false, false)}x`;
+            }
+            if (c !== 0) {
+                const cSign = c >= 0 ? '+' : '-';
+                const cAbs = Math.abs(c);
+                step1Content += ` ${cSign} ${formatNumber(cAbs)}`; // 使用formatNumber
+            }
+            
+            if (a === 1) {
+                step1Content += `<br>二次项系数 a = 1，所以不需要提取。`;
+            } else {
+                step1Content += `<br>提取二次项系数 a = ${formatCoefficient(a, true, false)}。`;
+            }
+            
+            // 步骤2: 配方准备
+            let step2Content = `我们需要将 ${formatCoefficient(a, true, false)}x² ${b >= 0 ? '+' : '-'} ${formatCoefficient(Math.abs(b), false, false)}x 部分配成完全平方。<br>`;
+            
+            if (a === 1) {
+                step2Content += `一次项系数是 ${b}，它的一半是 ${b/2}，平方是 ${(b/2)*(b/2)}。<br>`;
+                step2Content += `所以加上并减去 ${(b/2)*(b/2)}。`;
+            } else {
+                step2Content += `首先提取 a = ${formatCoefficient(a, true, false)}：<br>`;
+                step2Content += `y = ${formatCoefficient(a, true, false)}(x² ${b/a >= 0 ? '+' : '-'} ${formatCoefficient(Math.abs(b/a), false, false)}x) ${c >= 0 ? '+' : '-'} ${formatNumber(Math.abs(c))}<br>`;
+                step2Content += `括号内一次项系数是 ${b/a}，它的一半是 ${b/(2*a)}，平方是 ${(b/(2*a))*(b/(2*a))}。<br>`;
+                step2Content += `所以括号内加上并减去 ${(b/(2*a))*(b/(2*a))}。`;
+            }
+            
+            // 步骤3: 写成完全平方
+            let step3Content = "";
+            if (a === 1) {
+                step3Content = `将前三项写成完全平方形式：(x ${b/2 >= 0 ? '+' : '-'} ${formatNumber(Math.abs(b/2))})²<br>`;
+                step3Content += `合并常数项：${formatNumber(c)} ${(b/2)*(b/2) >= 0 ? '-' : '+'} ${formatNumber(Math.abs((b/2)*(b/2)))} = ${formatNumber(c - (b/2)*(b/2))}`;
+            } else {
+                step3Content = `将括号内前三项写成完全平方形式：(x ${b/(2*a) >= 0 ? '+' : '-'} ${formatNumber(Math.abs(b/(2*a)))})²<br>`;
+                const constant = c - a * (b/(2*a)) * (b/(2*a));
+                step3Content += `合并常数项：${formatCoefficient(a, true, false)} × ${formatNumber((b/(2*a))*(b/(2*a)))} ${c >= 0 ? '+' : '-'} ${formatNumber(Math.abs(c))} = ${formatNumber(constant)}`;
+            }
+            
+            // 步骤4: 化为标准顶点式
+            let step4Content = `将完全平方形式写成标准顶点式 y = a(x - h)² + k<br>`;
+            const h = vertex.h;
+            const k = vertex.k;
+            
+            step4Content += `注意：(x ${h >= 0 ? '+' : '-'} ${formatNumber(Math.abs(h))})² = (x - (${formatNumber(-h)}))²<br>`;
+            step4Content += `所以 h = ${formatNumber(h)}, k = ${formatNumber(k)}`;
+            
+            // 步骤5: 最终结果
+            let step5Content = `简化得到顶点式，并写出顶点坐标。`;
+            
+            // 更新步骤显示
+            step1Equation.textContent = `y = ${formatCoefficient(a, true, false)}x² ${b >= 0 ? '+' : '-'} ${formatCoefficient(Math.abs(b), false, false)}x ${c >= 0 ? '+' : '-'} ${formatNumber(Math.abs(c))}`;
+            
+            if (a === 1) {
+                step2Equation.textContent = `y = (x² ${b >= 0 ? '+' : '-'} ${formatCoefficient(Math.abs(b), false, false)}x + ${formatNumber((b/2)*(b/2))}) - ${formatNumber((b/2)*(b/2))} ${c >= 0 ? '+' : '-'} ${formatNumber(Math.abs(c))}`;
+                step3Equation.textContent = `y = (x ${b/2 >= 0 ? '+' : '-'} ${formatNumber(Math.abs(b/2))})² ${c - (b/2)*(b/2) >= 0 ? '+' : '-'} ${formatNumber(Math.abs(c - (b/2)*(b/2)))}`;
+            } else {
+                step2Equation.textContent = `y = ${formatCoefficient(a, true, false)}(x² ${b/a >= 0 ? '+' : '-'} ${formatCoefficient(Math.abs(b/a), false, false)}x + ${formatNumber((b/(2*a))*(b/(2*a)))}) - ${formatCoefficient(a, true, false)} × ${formatNumber((b/(2*a))*(b/(2*a)))} ${c >= 0 ? '+' : '-'} ${formatNumber(Math.abs(c))}`;
+                step3Equation.textContent = `y = ${formatCoefficient(a, true, false)}(x ${b/(2*a) >= 0 ? '+' : '-'} ${formatNumber(Math.abs(b/(2*a)))})² ${k >= 0 ? '+' : '-'} ${formatNumber(Math.abs(k))}`;
+            }
+            
+            step4Equation.textContent = `y = ${formatCoefficient(a, true, false)}(x - (${formatNumber(-h)}))² ${k >= 0 ? '+' : '-'} ${formatNumber(Math.abs(k))}`;
+            step5Equation.textContent = `顶点式: ${vertex.string}<br>顶点坐标: (${formatNumber(h)}, ${formatNumber(k)})`;
+            
+            // 更新正确答案显示
+            correctAnswerElement.innerHTML = `${vertex.string}<br>顶点坐标: (${formatNumber(h)}, ${formatNumber(k)})`;
+        }
+        
+        // 显示解题步骤
+        function showSolutionSteps() {
+            // 隐藏所有步骤
+            stepElements.forEach(step => step.classList.remove('active'));
+            
+            // 显示第一步
+            stepElements[0].classList.add('active');
+            
+            // 设置定时器逐步显示后续步骤
+            let stepIndex = 0;
+            const stepInterval = setInterval(() => {
+                stepIndex++;
+                if (stepIndex < stepElements.length) {
+                    stepElements[stepIndex].classList.add('active');
+                } else {
+                    clearInterval(stepInterval);
+                }
+            }, 1500);
+        }
+        
+        // 显示答案
+        function showAnswer() {
+            answerDisplay.classList.add('show');
+        }
+        
+        // 检查答案
+        function checkAnswer() {
+            submitAnswer();
+        }
+        
+        // 提交答案
+        function submitAnswer() {
+            if (!currentFunction) return;
+            
+            const userA = parseFloat(aValueInput.value);
+            const userH = parseFloat(hValueInput.value);
+            const userK = parseFloat(kValueInput.value);
+            const vertex = currentFunction.vertex;
+            
+            if (isNaN(userA) || isNaN(userH) || isNaN(userK)) {
+                resultMessage.textContent = "请输入有效的a、h和k值！";
+                resultMessage.className = "result-message incorrect";
+                resultMessage.style.display = "block";
+                return;
+            }
+            
+            // 检查答案是否正确（允许小数误差）
+            const epsilon = 0.01;
+            const aCorrect = Math.abs(userA - vertex.a) < epsilon;
+            const hCorrect = Math.abs(userH - vertex.h) < epsilon;
+            const kCorrect = Math.abs(userK - vertex.k) < epsilon;
+            
+            if (aCorrect && hCorrect && kCorrect) {
+                resultMessage.textContent = "正确！答案准确无误。";
+                resultMessage.className = "result-message correct";
+                correctAnswers++;
+                updateStats();
+            } else {
+                resultMessage.textContent = `不正确。正确答案是 a = ${formatNumber(vertex.a)}, h = ${formatNumber(vertex.h)}, k = ${formatNumber(vertex.k)}`;
+                resultMessage.className = "result-message incorrect";
+            }
+            
+            resultMessage.style.display = "block";
+        }
+        
+        // 添加到历史记录
+        function addToHistory() {
+            if (!currentFunction) return;
+            
+            const a = currentFunction.a;
+            const b = currentFunction.b;
+            const c = currentFunction.c;
+            const vertex = currentFunction.vertex;
+            
+            // 格式化一般式
+            let generalStr = `y = ${formatCoefficient(a, true, false)}x²`;
+            if (b !== 0) {
+                const bSign = b >= 0 ? '+' : '-';
+                const bAbs = Math.abs(b);
+                generalStr += ` ${bSign} ${formatCoefficient(bAbs, false, false)}x`;
+            }
+            if (c !== 0) {
+                const cSign = c >= 0 ? '+' : '-';
+                const cAbs = Math.abs(c);
+                generalStr += ` ${cSign} ${formatNumber(cAbs)}`; // 使用formatNumber
+            }
+            
+            // 简化字符串
+            generalStr = generalStr.replace(' 1x²', ' x²').replace('-1x²', '-x²');
+            generalStr = generalStr.replace('+ -', '- ');
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = `${generalStr} → ${vertex.string}`;
+            
+            // 添加到列表顶部
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            // 限制历史记录数量
+            if (historyList.children.length > 10) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+        
+        // 更新统计
+        function updateStats() {
+            totalProblemsElement.textContent = totalProblems;
+            correctAnswersElement.textContent = correctAnswers;
+        }
+        
+        // 辅助函数：获取随机整数
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        // 辅助函数：获取随机非零整数
+        function getRandomIntNonZero(min, max) {
+            let num = 0;
+            do {
+                num = getRandomInt(min, max);
+            } while (num === 0);
+            return num;
+        }
+        
+        // 辅助函数：获取随机偶数
+        function getRandomEvenInt(min, max) {
+            let num = 0;
+            do {
+                num = getRandomInt(min, max);
+            } while (num % 2 !== 0);
+            return num;
+        }
+        
+        // 辅助函数：从数组中随机选择元素
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+        
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>
