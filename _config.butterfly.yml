@@ -149,7 +149,7 @@ index_top_img_height: 300px
 
 # The subtitle on homepage
 subtitle:
-  enable: false
+  enable: true
   # Typewriter Effect
   effect: true
   # Customize typed.js
@@ -165,6 +165,7 @@ subtitle:
   source: false
   # If you close the typewriter effect, the subtitle will only show the first line of sub
   sub:
+    - 代码写的越急，程序跑得越慢。—— Roy Carlson
 
 # Article layout on the homepage
 # 1: Cover on the left, info on the right
