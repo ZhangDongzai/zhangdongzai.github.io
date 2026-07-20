@@ -46,7 +46,7 @@ code_blocks:
 # Formal:
 #   icon: link || the description || color
 social:
-  fab fa-github: https://github.com/ZhangDongzai || Github || '#24292e'
+  # fab fa-github: https://github.com/ZhangDongzai || Github || '#24292e'
   fas fa-envelope: mailto:3187480352@qq.com || Email || '#4a7dbe'
 
 # --------------------------------------
