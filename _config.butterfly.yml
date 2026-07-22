@@ -638,6 +638,8 @@ giscus:
   dark_theme: dark
   js: https://giscus.app/client.js
   option:
+    data-mapping: title
+    data-input-position: top
 
 # Remark42
 # https://remark42.com/docs/configuration/frontend/
