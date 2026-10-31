@@ -157,19 +157,18 @@ button{font-family:inherit}
     #eef1f4}
 #map{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
 #floorLayer path{vector-effect:non-scaling-stroke}
-#floorLayer{filter:drop-shadow(0 1px 1px rgba(17,24,39,.05))}
 #map.picking{cursor:crosshair}
 #map.dragging{cursor:grabbing}
 
 .map-head{position:absolute;left:74px;right:18px;top:16px;display:flex;justify-content:space-between;
   align-items:flex-start;gap:10px;pointer-events:none;z-index:4}
-.floor-title{background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border:1px solid var(--line);
+.floor-title{background:rgba(255,255,255,.97);border:1px solid var(--line);
   border-radius:12px;padding:8px 13px;box-shadow:var(--shadow);pointer-events:auto}
 .floor-title b{font-size:15px;letter-spacing:.2px}
 .floor-title span{font-size:11.5px;color:var(--muted);margin-left:7px}
 .head-actions{display:flex;gap:7px;pointer-events:auto}
-.ghost{height:32px;padding:0 11px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.94);
-  backdrop-filter:blur(10px);font-size:11.5px;color:#4b5563;cursor:pointer;display:flex;align-items:center;gap:5px;
+.ghost{height:32px;padding:0 11px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.97);
+  font-size:11.5px;color:#4b5563;cursor:pointer;display:flex;align-items:center;gap:5px;
   box-shadow:0 1px 3px rgba(16,24,40,.05)}
 .ghost:hover{color:var(--brand);border-color:#cfe0dc}
 
@@ -180,12 +179,12 @@ button{font-family:inherit}
 .compass-btn.disabled:hover{background:#d5dce5;border-color:#b9c4d1;color:#5d6876}
 .compass-btn .compass-ico{display:flex;width:14px;height:14px;flex:0 0 auto}
 .compass-btn .compass-ico svg{width:14px;height:14px}
-#compassNeedle{transform-origin:12px 12px;transition:transform .1s linear}
+#compassNeedle{transform-origin:12px 12px}
 .compass-btn.prompt{color:#b45309;border-color:#f0d9b8;background:#fffaf2}
 .compass-btn.prompt:hover{color:#92400e;border-color:#e7c896}
 
 .rail{position:absolute;left:14px;top:74px;bottom:22px;width:46px;overflow-y:auto;
-  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border:1px solid var(--line);
+  background:rgba(255,255,255,.98);border:1px solid var(--line);
   border-radius:14px;padding:6px 5px;display:flex;flex-direction:column;gap:2px;z-index:5;
   scrollbar-width:none;box-shadow:var(--shadow)}
 .rail::-webkit-scrollbar{display:none}
@@ -197,7 +196,7 @@ button{font-family:inherit}
 .rail button.active.on-route{box-shadow:inset 2px 0 0 #fff}
 .rail .rail-sep{height:1px;background:#edf0f3;margin:3px 2px;flex:0 0 auto}
 
-.legend{position:absolute;left:74px;bottom:18px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
+.legend{position:absolute;left:74px;bottom:18px;background:rgba(255,255,255,.97);
   border:1px solid var(--line);border-radius:11px;padding:9px 11px;box-shadow:var(--shadow);z-index:4;
   display:flex;flex-direction:column;gap:6px;font-size:10.5px;color:#5b6472}
 .legend .lg-row{display:flex;align-items:center;gap:12px}
@@ -207,8 +206,8 @@ button{font-family:inherit}
 .scale i{display:block;height:5px;border-left:1px solid #9aa3af;border-right:1px solid #9aa3af;
   border-bottom:1px solid #9aa3af;width:60px}
 
-.zoom{position:absolute;right:18px;bottom:18px;display:flex;flex-direction:column;background:rgba(255,255,255,.95);
-  backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:var(--shadow);z-index:4}
+.zoom{position:absolute;right:18px;bottom:18px;display:flex;flex-direction:column;background:rgba(255,255,255,.98);
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:var(--shadow);z-index:4}
 .zoom button{width:36px;height:34px;border:0;background:transparent;cursor:pointer;color:#4b5563;font-size:16px;
   display:flex;align-items:center;justify-content:center}
 .zoom button + button{border-top:1px solid var(--line-soft)}
@@ -273,7 +272,7 @@ body.navigating .map-head{display:flex;left:auto;right:18px;top:16px;width:auto}
 body.navigating .floor-title,
 body.navigating #fitFloor,
 body.navigating #fitRoute{display:none}
-body.navigating .compass-btn:not(.on):not(.disabled){background:rgba(255,255,255,.94);backdrop-filter:blur(10px)}
+body.navigating .compass-btn:not(.on):not(.disabled){background:rgba(255,255,255,.97)}
 body.navigating .zoom{right:18px;bottom:190px}
 body.navigating .toast{bottom:190px}
 
@@ -637,6 +636,31 @@ const COMPASS_KEY = "szzx.compass";
 let compassProbeTimer = null;
 let compassRAF = 0;
 
+/* ---- 旋转性能探针（?perf=1，调试用）：把逐帧间隔写进 document.title ---- */
+const perf = { on:false, frames:[], last:0, loaf:[], timer:0 };
+function perfStart(){
+  if(!perf.on) return;
+  perf.frames = []; perf.last = 0; perf.loaf = [];
+  clearTimeout(perf.timer);
+  document.title = "PERF 测量中…";
+  perf.timer = setTimeout(perfReport, 1400);
+}
+function perfFrame(){
+  if(!perf.on) return;
+  const t = performance.now();
+  if(perf.last) perf.frames.push(t - perf.last);
+  perf.last = t;
+}
+function perfReport(){
+  if(!perf.on) return;
+  const a = perf.frames.slice().sort((x,y)=>x-y);
+  if(!a.length){ document.title = "PERF 无旋转帧"; return; }
+  const q = p => a[Math.min(a.length-1, Math.floor(a.length*p))].toFixed(1);
+  const over = a.filter(v=>v>33).length;
+  const loaf = perf.loaf.length ? Math.max(...perf.loaf).toFixed(1) : "-";
+  document.title = `PERF n=${a.length} p50=${q(.5)} p90=${q(.9)} max=${a[a.length-1].toFixed(1)} >33ms=${over} LoAFmax=${loaf}`;
+}
+
 function norm360(d){ return ((d % 360) + 360) % 360; }
 function norm180(d){ let v = ((d + 180) % 360 + 360) % 360 - 180; return v; }
 
@@ -664,9 +688,14 @@ function setCompassHeading(h, snap){
   if(snap || !c.hasSignal){
     c.heading = h;
   } else {
+    // 平滑系数按事件间隔归一化：不同设备的采样率（20–60Hz）下跟随速度一致
+    const now = performance.now();
+    const dt = Math.min(250, now - (c.lastHeadingAt || now - 16.7));
+    const k = 1 - Math.pow(1 - 0.22, dt / 16.7);
     let d = norm180(h - c.heading);
-    c.heading = norm360(c.heading + d * 0.22);
+    c.heading = norm360(c.heading + d * k);
   }
+  c.lastHeadingAt = performance.now();
   c.hasSignal = true;
   c.lastEvent = Date.now();
   if(state.nav.active && c.enabled) startCompassTick();
@@ -676,12 +705,16 @@ function compassRotationDeg(){
   return state.compass.rot || 0;
 }
 
+let lastNeedleRot = NaN;
 function updateCompassNeedle(){
   const needle = $("compassNeedle");
   if(!needle) return;
   const c = state.compass;
-  const deg = (state.nav.active && c.enabled && compassSupported()) ? -c.heading : 0;
-  needle.style.transform = `rotate(${deg.toFixed(1)}deg)`;
+  const deg = c.rot || 0;
+  if(Math.abs(deg - lastNeedleRot) < 0.05) return;
+  lastNeedleRot = deg;
+  // 与地图旋转角保持一致（北向指针指向屏幕上的真北），随缓动平滑转动
+  needle.style.transform = `rotate(${deg.toFixed(2)}deg)`;
 }
 
 function renderCompassButton(){
@@ -719,12 +752,20 @@ function loadCompassPref(){
 
 function startCompassTick(){
   if(compassRAF) return;
-  const step = () => {
+  perfStart();
+  let prev = 0;
+  const step = now => {
     compassRAF = 0;
+    perfFrame();
     const c = state.compass;
+    const t = typeof now === "number" ? now : performance.now();
+    const dt = prev ? Math.min(80, t - prev) : 16.7;
+    prev = t;
+
     const active = state.nav.active && c.enabled && compassSupported();
     const target = active ? -c.heading : 0;
     let d = norm180(target - c.rot);
+
     if(Math.abs(d) < 0.06){
       if(Math.abs(c.rot - target) > 1e-6){
         c.rot = target;
@@ -733,7 +774,10 @@ function startCompassTick(){
       updateCompassNeedle();
       return;
     }
-    c.rot = norm180(c.rot + d * 0.2);
+
+    // 时间步长相关缓动：60/90/120Hz 屏幕上的收敛速度保持一致；掉帧时快速追上
+    const k = 1 - Math.pow(1 - 0.22, dt / 16.67);
+    c.rot = norm180(c.rot + d * k);
     applyView();
     updateCompassNeedle();
     compassRAF = requestAnimationFrame(step);
@@ -843,6 +887,15 @@ function initCompass(){
   const params = new URLSearchParams(location.search);
   const sim = params.get("compass");
   const c = state.compass;
+
+  if(params.get("perf") === "1"){
+    perf.on = true;
+    try{
+      new PerformanceObserver(list=>{
+        for(const e of list.getEntries()) perf.loaf.push(e.duration);
+      }).observe({type:"long-animation-frame", buffered:false});
+    }catch(_){}
+  }
 
   if(sim === "sim" || sim === "1"){
     c.sim = true;
@@ -1016,9 +1069,10 @@ function updateLabelStyle(){
   if(!g) return;
   const base = containerSize().w < 980 ? 9.5 : 11;
   const fs = base / s;
-  g.setAttribute("font-family", "-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif");
   if(lastLabelScale > 0 && Math.abs(s-lastLabelScale)/s < 0.002) return;
   lastLabelScale = s;
+  // 字体族只需在真正重排标签时写一次；每帧写会反复使整个文本层失效
+  g.setAttribute("font-family", "-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif");
   const rooms = [...g.querySelectorAll(".lb-room")];
   const circs = [...g.querySelectorAll(".lb-circ")];
   const outs = [...g.querySelectorAll(".lb-out")];
@@ -1086,12 +1140,16 @@ function layoutLabels(fs){
       }
     }
   }
-  updateLabelRotation();
+  updateLabelRotation(true);
 }
 
 // 地图旋转时让文字保持正立：每个标签绕自身锚点反向旋转
-function updateLabelRotation(){
+// 只有角度真正变化时才写 DOM，避免每帧重写几百个文本节点
+let lastLabelRot = NaN;
+function updateLabelRotation(force){
   const deg = -compassRotationDeg();
+  if(!force && Math.abs(deg - lastLabelRot) < 0.02) return;
+  lastLabelRot = deg;
   for(const t of visibleLabels){
     if(Math.abs(deg) < 0.05){
       t.removeAttribute("transform");
@@ -1103,6 +1161,18 @@ function updateLabelRotation(){
 
 /* ==================== js/20-view.js ==================== */
 /* ============================== 视图变换 ============================== */
+// 旋转动画期间每帧都会调用 applyView；避免重复 getBoundingClientRect 造成强制重排
+let vpCache = {w:0, h:0};
+function containerSize(){
+  if(!vpCache.w){
+    const r = mapEl.getBoundingClientRect();
+    vpCache = {w:r.width, h:r.height};
+  }
+  return vpCache;
+}
+function invalidateViewport(){ vpCache = {w:0, h:0}; }
+
+let lastWorldTr = "";
 function applyView(){
   const {x,y,s} = state.view;
   const {w,h} = containerSize();
@@ -1112,16 +1182,14 @@ function applyView(){
   const tr = Math.abs(rot) < 0.01
     ? `translate(${x} ${y}) scale(${s})`
     : `translate(${ax} ${ay}) rotate(${rot}) translate(${-ax} ${-ay}) translate(${x} ${y}) scale(${s})`;
-  world.setAttribute("transform", tr);
+  if(tr !== lastWorldTr){
+    world.setAttribute("transform", tr);
+    lastWorldTr = tr;
+  }
   updateLabelStyle();
   updateLabelRotation();
   updateMarkersScale();
   updateScaleBar();
-}
-
-function containerSize(){
-  const r = mapEl.getBoundingClientRect();
-  return {w:r.width,h:r.height};
 }
 
 function fitBounds(b, padding=54, maxScale=8, insets=null){
@@ -1182,8 +1250,11 @@ function routeBounds(){
   return [x0-mx,y0-my,x1+mx,y1+my];
 }
 
+let lastScaleBarS = -1;
 function updateScaleBar(){
   const s = state.view.s;           // px per map unit
+  if(Math.abs(s - lastScaleBarS) < 1e-9) return;
+  lastScaleBarS = s;
   const pxPerMeter = s * UNIT;
   const targetPx = 64;
   const meters = targetPx / Math.max(pxPerMeter, 1e-9);
@@ -1579,6 +1650,7 @@ function nearestRoom(p, fi, maxM){
 /* ==================== js/40-route-render.js ==================== */
 /* ============================== 路线渲染 ============================== */
 function renderRoute(){
+  lastMkKey = "";
   routeLayer.innerHTML = "";
   markerLayer.innerHTML = "";
   if(!state.route){ return; }
@@ -1652,8 +1724,13 @@ function marker(x,y,type,label){
   </g>`;
 }
 
+let lastMkKey = "";
 function updateMarkersScale(){
   const k = 1/state.view.s;
+  const rot = -compassRotationDeg();
+  const key = k.toFixed(5) + "|" + rot.toFixed(3);
+  if(key === lastMkKey) return;
+  lastMkKey = key;
   markerLayer.querySelectorAll(".mk").forEach(g=>{
     const t = g.getAttribute("transform") || "";
     const m = t.match(/translate\(([-\d.]+) ([-\d.]+)\)/);
@@ -2156,8 +2233,9 @@ function startNavigation(){
   state.activeStep = 0;
   document.body.classList.add("navigating");
   navLayer.classList.add("show");
-  focusStep(0, {nav:true});
-  renderNav();
+  // 导航模式下左侧面板隐藏，地图容器尺寸变化，先失效缓存再取景
+  invalidateViewport();
+  focusStep(0, {nav:true});   // 内部已调用 renderNav()，不要重复构建缩略图
   if(state.compass.enabled && compassSupported()){
     startCompassSensor();
     startCompassTick();
@@ -2168,6 +2246,7 @@ function exitNavigation(silent){
   state.nav.active = false;
   document.body.classList.remove("navigating");
   navLayer.classList.remove("show");
+  invalidateViewport();
   stopCompassSensor();
   state.compass.rot = 0;
   updateCompassNeedle();
@@ -2345,7 +2424,12 @@ document.getElementById("quick").addEventListener("click", e=>{
   computeRoute();
 });
 
+if(window.ResizeObserver){
+  // 面板显隐、窗口缩放都会改变地图尺寸，统一失效尺寸缓存
+  new ResizeObserver(()=>invalidateViewport()).observe(mapEl);
+}
 window.addEventListener("resize", ()=>{
+  invalidateViewport();
   if(state.nav.active && state.route){
     const st = state.route.steps[state.nav.index];
     if(st) fitStepNav(st); else applyView();
@@ -2397,6 +2481,8 @@ function init(){
   startInput.value = state.start ? state.start.n : "";
   endInput.value = state.end ? state.end.n : "";
   if(state.start && state.end) computeRoute();
+  // 调试：?nav=1 直接进入导航模式（便于自动化测试与真机截图）
+  if(params.get("nav") === "1" && state.route) startNavigation();
 }
 
 init();
